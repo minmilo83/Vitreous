@@ -1,163 +1,113 @@
 /* --- 基礎變數設定 --- */
 :root {
-    /* 預設淺色模式 (Light Mode) */
-    --bg-color: #f0f2f5;
-    --glass-bg: rgba(255, 255, 255, 0.4);
-    --glass-border: rgba(255, 255, 255, 0.6);
-    --text-color: #222;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --accent-color: #ffffff;
-    --svg-filter: none; /* 淺色模式不反轉 SVG */
-}
-
-body.dark-mode {
-    /* 深色模式 (Dark Mode) */
-    --bg-color: #0a0a0a;
-    --glass-bg: rgba(0, 0, 0, 0.5);
-    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.3);
     --text-color: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.5);
-    --accent-color: #1a1a1a;
-    --svg-filter: invert(1); /* 深色模式將黑色 SVG 反轉成白色 */
+    --accent-color: #e0e0e0;
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* --- 全域樣式 --- */
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-body {
-    background-color: var(--bg-color);
+    font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* 深色琉璃底色 */
     color: var(--text-color);
-    transition: background-color 0.5s ease, color 0.5s ease;
-    min-height: 100vh;
-    overflow-x: hidden;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* --- 流光背景效果 --- */
-.vibe-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: radial-gradient(circle at 50% 50%, var(--accent-color), var(--bg-color));
-    opacity: 0.6;
-    filter: blur(80px);
-}
-
-/* --- 導航列與按鈕 --- */
-.glass-nav {
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.glass-btn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    color: var(--text-color);
-    cursor: pointer;
-    font-weight: 500;
-    box-shadow: 0 4px 6px var(--shadow);
-    transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.glass-btn:active {
-    transform: scale(0.95);
-}
-
-/* --- 首頁佈局 (Grid) --- */
-.container {
-    width: 100%;
-    max-width: 600px;
-    padding: 20px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2x3 網格 */
-    gap: 20px;
-}
-
-.glass-card {
-    aspect-ratio: 1 / 1;
-    border-radius: 24px;
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* --- 主容器 --- */
+.container {
+    text-align: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* --- 結果顯示區域 --- */
+#result-container {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    transition: all 0.5s ease;
+}
+
+/* 飲料 Logo 樣式 */
+.drink-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+    margin-bottom: 15px;
+    animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 飲料店名稱 */
+.drink-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* --- 按鈕樣式 --- */
+.btn-pick {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 8px 32px var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    padding: 20px;
-    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
-.glass-card:hover {
-    transform: translateY(-5px);
+.btn-pick:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
 }
 
-.glass-card img {
-    width: 70%;
-    height: 70%;
-    object-fit: contain;
-    margin-bottom: 10px;
-    filter: var(--svg-filter); /* 套用深淺模式濾鏡 */
+.btn-pick:active {
+    transform: translateY(0);
 }
 
-.glass-card span {
-    font-size: 0.9rem;
-    font-weight: 600;
+/* --- 動畫效果 --- */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
 }
 
-/* --- 抽籤畫面與動畫 --- */
-.hidden {
-    display: none !important;
-}
-
-.slot-machine {
-    width: 250px;
-    height: 250px;
-    margin: 50px auto;
-}
-
-.slot-machine img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 拉霸過程中的模糊動畫 */
-.spinning {
-    filter: blur(4px) brightness(1.2) var(--svg-filter) !important;
-}
-
-.result-label {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    min-height: 1.5em;
-}
-
-.home-btn {
-    display: block;
-    margin: 30px auto;
+/* 特殊狀態：今天不要吃 (如果是 cross-mark 稍微變淡) */
+.dont-eat {
+    filter: grayscale(0.5) contrast(0.8) sepia(0.2);
+    opacity: 0.8;
 }
