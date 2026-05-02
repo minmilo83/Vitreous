@@ -6,56 +6,95 @@
     <title>Vitreous | 瑩透抽籤決定器</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <!-- PWA iOS 支援 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="assets/home/decision.svg">
 </head>
-<body class="light-mode"> <!-- 預設淺色模式 -->
+<body class="light-mode">
 
-    <!-- 背景流光效果 -->
+    <!-- 背景流體感流光 -->
     <div class="vibe-background"></div>
 
     <!-- 頂部功能列 -->
     <nav class="glass-nav">
-        <button id="theme-toggle" class="glass-btn">切換模式</button>
+        <div class="nav-controls">
+            <!-- 下載按鈕：預設隱藏，由 JS 判斷 PWA 環境後顯示 -->
+            <button id="install-app" class="glass-btn hidden">下載 APP</button>
+            <button id="theme-toggle" class="glass-btn">
+                <span class="mode-icon">🌓</span>
+            </button>
+        </div>
     </nav>
 
-    <!-- 首頁：六大模塊 -->
+    <!-- 首頁：六大玻璃模塊入口 -->
     <main id="home-screen" class="container">
+        <header class="home-header">
+            <h1>Vitreous</h1>
+            <p>讓選擇變得優雅</p>
+        </header>
+        
         <div class="grid">
+            <!-- 選擇菜單 -->
             <div class="glass-card" onclick="startDraw('menu')">
-                <img src="assets/home/menu.svg" alt="選擇菜單">
-                <span>選擇菜單</span>
+                <div class="card-content">
+                    <img src="assets/home/menu.svg" alt="選擇菜單">
+                    <span>選擇菜單</span>
+                </div>
             </div>
+            <!-- 選擇餐廳 -->
             <div class="glass-card" onclick="startDraw('restaurant')">
-                <img src="assets/home/restaurant.svg" alt="選擇餐廳">
-                <span>選擇餐廳</span>
+                <div class="card-content">
+                    <img src="assets/home/restaurant.svg" alt="選擇餐廳">
+                    <span>選擇餐廳</span>
+                </div>
             </div>
+            <!-- 選擇金額 -->
             <div class="glass-card" onclick="startDraw('price')">
-                <img src="assets/home/price.svg" alt="選擇金額">
-                <span>選擇金額</span>
+                <div class="card-content">
+                    <img src="assets/home/price.svg" alt="選擇金額">
+                    <span>選擇金額</span>
+                </div>
             </div>
+            <!-- 選擇數目 -->
             <div class="glass-card" onclick="startDraw('count')">
-                <img src="assets/home/count.svg" alt="選擇數目">
-                <span>選擇數目</span>
+                <div class="card-content">
+                    <img src="assets/home/count.svg" alt="選擇數目">
+                    <span>選擇數目</span>
+                </div>
             </div>
+            <!-- 選擇飲料店 -->
             <div class="glass-card" onclick="startDraw('drink')">
-                <img src="assets/home/drink.svg" alt="選擇飲料店">
-                <span>選擇飲料店</span>
+                <div class="card-content">
+                    <img src="assets/home/drink.svg" alt="選擇飲料店">
+                    <span>選擇飲料店</span>
+                </div>
             </div>
+            <!-- 要 / 不要 (THINK 模式) -->
             <div class="glass-card" onclick="startDraw('decision')">
-                <img src="assets/home/decision.svg" alt="要/不要">
-                <span>要 / 不要</span>
+                <div class="card-content">
+                    <img src="assets/home/decision.svg" alt="要/不要">
+                    <span>要 / 不要</span>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- 抽籤介面 (預設隱藏) -->
+    <!-- 抽籤介面：執行拉霸動畫的舞台 -->
     <section id="draw-screen" class="container hidden">
-        <div class="slot-machine glass-card">
-            <img id="slot-img" src="" alt="抽籤中">
+        <div class="draw-container">
+            <div class="slot-machine glass-card">
+                <img id="slot-img" src="" alt="抽籤中">
+            </div>
+            <div id="result-text" class="result-label"></div>
+            
+            <footer class="draw-footer">
+                <button onclick="goHome()" class="glass-btn home-btn">回首頁</button>
+            </footer>
         </div>
-        <div id="result-text" class="result-label"></div>
-        <button onclick="goHome()" class="glass-btn home-btn">回首頁</button>
     </section>
 
+    <!-- 核心邏輯腳本 -->
     <script src="script.js"></script>
 </body>
 </html>
