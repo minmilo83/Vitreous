@@ -1,9 +1,10 @@
 /**
- * Vitreous - 瑩透抽籤決定器 (結合 20 家飲料店輪盤)
- * 功能：PWA 安裝控制、黑白模式切換、變速拉霸邏輯、THINK 儀式感
+ * Vitreous - 瑩透抽籤決定器
+ * 核心功能：PWA 控制、變速拉霸演算法、THINK 儀式感、自動除錯路徑
  */
 
-// --- 1. 舊有資料配置 (保留你的舊版設定) ---
+// --- 1. 資料配置 ---
+// 注意：資料夾名稱需與 GitHub 倉庫完全一致 (大小寫敏感)
 const DRAW_DATA = {
     menu: ['pasta.svg', 'ramen.svg', 'rice.svg', 'hotpot.svg'], 
     restaurant: ['store_a.svg', 'store_b.svg', 'store_c.svg'],
@@ -15,7 +16,7 @@ const DRAW_DATA = {
     }
 };
 
-// --- 2. 新增：飲料店專屬資料設定 (共 20 個選項) ---
+// 飲料店專屬資料 (路徑已包含 assets/Tea-Shop/)
 const drinkOptions = [
     { id: 'starbucks',  name: '星巴克',        img: 'assets/Tea-Shop/starbucks.svg' },
     { id: 'yimuji',     name: '一沐日',        img: 'assets/Tea-Shop/yimuji.svg' },
@@ -35,197 +36,164 @@ const drinkOptions = [
     { id: 'tao-tao',    name: '先喝道',        img: 'assets/Tea-Shop/tao-tao.svg' },
     { id: 'nap-tea',    name: '再睡5分鐘',     img: 'assets/Tea-Shop/nap-tea.svg' },
     { id: 'truedan',    name: '珍煮丹',        img: 'assets/Tea-Shop/truedan.svg' },
-    { id: 'dont-eat',   name: '今天不要吃',    img: 'assets/Tea-Shop/dont-eat.svg' },
+    { id: 'dont-eat',   name: '今天休息',      img: 'assets/Tea-Shop/dont-eat.svg' },
     { id: 'try-again',  name: '再抽一次',      img: 'assets/Tea-Shop/try-again.svg' }
 ];
 
-// --- 3. PWA 手動安裝邏輯 ---
-let deferredPrompt;
-const installBtn = document.getElementById('install-app');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if(installBtn) installBtn.classList.remove('hidden');
-});
-
-if(installBtn) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install: ${outcome}`);
-            deferredPrompt = null;
-            installBtn.classList.add('hidden');
-        }
-    });
-}
-
-window.addEventListener('appinstalled', () => {
-    console.log('Vitreous 已成功安裝');
-    if(installBtn) installBtn.classList.add('hidden');
-});
-
-// --- 4. 深淺模式切換 ---
-const themeToggle = document.getElementById('theme-toggle');
-
-const applyTheme = (theme) => {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-    } else {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-    }
-};
-
-if(themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('dark-mode');
-        document.body.classList.toggle('light-mode', !isDark);
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    });
-}
-applyTheme(localStorage.getItem('theme') || 'light');
-
-// --- 5. 導航邏輯 (新增 tea-shop 判斷) ---
+// --- 2. 導航與介面切換 ---
 function startDraw(type) {
     const homeScreen = document.getElementById('home-screen');
     const drawScreen = document.getElementById('draw-screen');
     const resultText = document.getElementById('result-text');
     const slotImg = document.getElementById('slot-img');
 
-    if(homeScreen) homeScreen.classList.add('hidden');
-    if(drawScreen) drawScreen.classList.remove('hidden');
-    if(resultText) resultText.innerText = "轉動中..."; 
-    if(slotImg) slotImg.style.transform = "scale(1)";
+    // 介面切換
+    homeScreen.classList.add('hidden');[cite: 2]
+    drawScreen.classList.remove('hidden');[cite: 2]
+    
+    // 初始化狀態，避免看到上一輪的結果
+    resultText.innerText = "準備中...";[cite: 2]
+    slotImg.style.transform = "scale(1)";[cite: 2]
+    slotImg.classList.remove('spinning');
 
-    // 判斷要執行哪一種抽籤邏輯
+    // 根據 type 執行對應邏輯
     if (type === 'decision') {
-        runDecisionLogic();
-    } else if (type === 'tea-shop') {
-        runTeaShopLogic(); // 執行新的飲料店拉霸
+        runDecisionLogic();[cite: 2]
+    } else if (type === 'tea-shop' || type === 'drink') {
+        // 同時相容兩種叫法，確保 index.html 不管寫哪個都能跑
+        runTeaShopLogic();[cite: 2]
     } else {
-        runSlotLogic(type);
+        runSlotLogic(type);[cite: 2]
     }
 }
 
 function goHome() {
-    document.getElementById('home-screen').classList.remove('hidden');
-    document.getElementById('draw-screen').classList.add('hidden');
+    document.getElementById('home-screen').classList.remove('hidden');[cite: 2]
+    document.getElementById('draw-screen').classList.add('hidden');[cite: 2]
 }
 
-// --- 6. 新增：專屬飲料店的拉霸演算法 ---
+// --- 3. 核心拉霸演算法 (飲料店) ---
 async function runTeaShopLogic() {
     const slotImg = document.getElementById('slot-img');
     const resultText = document.getElementById('result-text');
     
-    // 隨機轉動總時間 2.0s - 3.0s
-    const totalDuration = Math.floor(Math.random() * 1000) + 2000; 
+    const totalDuration = 2500; // 固定轉動約 2.5 秒
     let elapsed = 0;
-    let delay = 120; // 初始延遲 (ms)
+    let delay = 100; 
     
-    slotImg.classList.add('spinning');
-    let finalResult = null;
+    slotImg.classList.add('spinning');[cite: 2, 3]
+    let currentOption = drinkOptions[0];
 
     while (elapsed < totalDuration) {
-        // 隨機挑選一家店
-        const randomIndex = Math.floor(Math.random() * drinkOptions.length);
-        finalResult = drinkOptions[randomIndex];
-        
-        // 在轉動過程中不斷替換圖片
-        slotImg.src = finalResult.img;
-        // 轉動時也可以讓文字跟著閃爍店名（增加Vibe感）
-        resultText.innerText = finalResult.name; 
-        
+        currentOption = drinkOptions[Math.floor(Math.random() * drinkOptions.length)];
+        slotImg.src = currentOption.img;[cite: 2]
+        resultText.innerText = "挑選中...";
+
+        // 變速曲線邏輯
         const progress = elapsed / totalDuration;
-        // 變速曲線
-        if (progress < 0.25) delay -= 8;      // 加速
-        else if (progress > 0.7) delay += 25; // 減速
-        else delay = 40;                      // 高速穩定
+        if (progress < 0.2) delay = 80;       // 加速階段
+        else if (progress > 0.7) delay += 30; // 減速階段
+        else delay = 50;                     // 穩定高速階段
 
-        delay = Math.max(30, Math.min(delay, 500)); // 限制範圍
-
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise(r => setTimeout(r, delay));
         elapsed += delay;
     }
 
-    slotImg.classList.remove('spinning');
+    slotImg.classList.remove('spinning');[cite: 3]
     
-    // 結算畫面文字判斷
-    if (finalResult.id === 'try-again') {
-        resultText.innerText = "運氣不錯，再抽一次吧！";
-    } else if (finalResult.id === 'dont-eat') {
-        resultText.innerText = "今天休息，喝水就好！";
+    // 結算文字
+    if (currentOption.id === 'try-again') {
+        resultText.innerText = "運氣不錯，再抽一次吧！";[cite: 2]
+    } else if (currentOption.id === 'dont-eat') {
+        resultText.innerText = "今天休息，喝水就好！";[cite: 2]
     } else {
-        resultText.innerText = `今天喝：${finalResult.name}！`;
+        resultText.innerText = `今天喝：${currentOption.name}`;[cite: 2]
     }
     
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // 結束震動回饋
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);[cite: 2]
 }
 
-// --- 7. 舊版拉霸演算法 (保留給你的 menu, restaurant 等使用) ---
+// --- 4. 基礎拉霸演算法 (菜單、餐廳等) ---
 async function runSlotLogic(type) {
     const slotImg = document.getElementById('slot-img');
     const resultText = document.getElementById('result-text');
     const items = DRAW_DATA[type];
-    if(!items) return;
     
-    const totalDuration = Math.floor(Math.random() * 1000) + 2000; 
-    let elapsed = 0;
-    let delay = 120; 
+    if(!items) {
+        console.error("找不到對應的資料類型:", type);
+        return;
+    }
     
     slotImg.classList.add('spinning');
+    let elapsed = 0;
+    const totalDuration = 2000;
+    let delay = 100;
 
     while (elapsed < totalDuration) {
-        const randomIndex = Math.floor(Math.random() * items.length);
-        slotImg.src = `assets/${type}/${items[randomIndex]}`;
+        const randomItem = items[Math.floor(Math.random() * items.length)];
+        // 修正路徑拼接：assets/類型/檔名
+        slotImg.src = `assets/${type}/${randomItem}`;[cite: 2]
         
         const progress = elapsed / totalDuration;
-        if (progress < 0.25) delay -= 8;      
-        else if (progress > 0.7) delay += 25; 
-        else delay = 40;                      
+        delay = progress > 0.8 ? delay + 40 : 60;
 
-        delay = Math.max(30, Math.min(delay, 500)); 
-
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise(r => setTimeout(r, delay));
         elapsed += delay;
     }
 
     slotImg.classList.remove('spinning');
     resultText.innerText = "這是您的結果";
-    
-    if (navigator.vibrate) navigator.vibrate(50); 
+    if (navigator.vibrate) navigator.vibrate(50);[cite: 2]
 }
 
-// --- 8. 要/不要 THINK 邏輯 (保留) ---
+// --- 5. THINK 儀式感邏輯 ---
 async function runDecisionLogic() {
-    // ... (保留你原本的程式碼，此處省略以保持整潔，你可以直接使用上面完整區塊)
     const slotImg = document.getElementById('slot-img');
     const resultText = document.getElementById('result-text');
     const { think, options } = DRAW_DATA.decision;
 
+    // 進入思考狀態：縮放效果
     slotImg.src = `assets/decision/${think}`;
-    slotImg.style.transition = "transform 2s ease-in-out";
-    slotImg.style.transform = "scale(1.15)"; 
+    slotImg.style.transition = "transform 1.5s ease-in-out";
+    slotImg.style.transform = "scale(1.2)"; 
+    resultText.innerText = "思考中...";
     
-    await new Promise(resolve => setTimeout(resolve, 2000)); 
+    await new Promise(r => setTimeout(r, 1500)); 
 
-    const finalResult = options[Math.floor(Math.random() * options.length)];
-    slotImg.src = `assets/decision/${finalResult}`;
+    // 彈出結果
+    const final = options[Math.floor(Math.random() * options.length)];
+    slotImg.src = `assets/decision/${final}`;
     slotImg.style.transition = "transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
     slotImg.style.transform = "scale(1)"; 
+    resultText.innerText = "決定了！";
     
-    resultText.innerText = "這是您的結果";
-    
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);[cite: 2]
 }
 
-// --- 9. Service Worker 註冊 ---
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker 已註冊'))
-            .catch(err => console.log('Service Worker 註冊失敗', err));
+// --- 6. PWA 與 主題控制 ---
+// 深淺模式切換
+const themeToggle = document.getElementById('theme-toggle');
+if(themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-mode');[cite: 2]
+        document.body.classList.toggle('light-mode', !isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
+}
+// 載入存儲的主題
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');[cite: 2, 3]
+
+// PWA 安裝按鈕
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('install-app');
+    if(btn) btn.classList.remove('hidden');[cite: 2]
+});
+
+// Service Worker 註冊
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));[cite: 2]
 }
