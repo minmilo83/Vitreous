@@ -1,163 +1,254 @@
-/* --- 基礎變數設定 --- */
+/* --- 1. 核心變數設定 --- */
 :root {
-    /* 預設淺色模式 (Light Mode) */
-    --bg-color: #f0f2f5;
-    --glass-bg: rgba(255, 255, 255, 0.4);
-    --glass-border: rgba(255, 255, 255, 0.6);
-    --text-color: #222;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --accent-color: #ffffff;
-    --svg-filter: none; /* 淺色模式不反轉 SVG */
+    /* 淺色模式 (Light Mode) */
+    --bg-color: #f4f7f9;
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.7);
+    --text-main: #1d1d1f;
+    --text-sub: #86868b;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --accent: #0071e3;
+    --card-hover: rgba(255, 255, 255, 0.6);
+    --svg-filter: none;
 }
 
 body.dark-mode {
-    /* 深色模式 (Dark Mode) */
-    --bg-color: #0a0a0a;
-    --glass-bg: rgba(0, 0, 0, 0.5);
+    /* 深色模式 (Dark Mode) - 深邃琉璃質感 */
+    --bg-color: #000000;
+    --glass-bg: rgba(28, 28, 30, 0.6);
     --glass-border: rgba(255, 255, 255, 0.15);
-    --text-color: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.5);
-    --accent-color: #1a1a1a;
-    --svg-filter: invert(1); /* 深色模式將黑色 SVG 反轉成白色 */
+    --text-main: #f5f5f7;
+    --text-sub: #a1a1a6;
+    --shadow: rgba(0, 0, 0, 0.6);
+    --accent: #0a84ff;
+    --card-hover: rgba(44, 44, 46, 0.8);
+    --svg-filter: invert(1) brightness(1.2); /* 將深色 SVG 轉為白色 */
 }
 
-/* --- 全域樣式 --- */
+/* --- 2. 全域基礎樣式 --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro NT", "SF Pro Display", "PingFang TC", "Helvetica Neue", sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.5s ease, color 0.5s ease;
+    color: var(--text-main);
     min-height: 100vh;
-    overflow-x: hidden;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease;
 }
 
-/* --- 流光背景效果 --- */
+/* 漸層流體背景 */
 .vibe-background {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: -1;
-    background: radial-gradient(circle at 50% 50%, var(--accent-color), var(--bg-color));
-    opacity: 0.6;
+    background: radial-gradient(circle at 20% 30%, rgba(0, 113, 227, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(172, 81, 223, 0.15), transparent 40%);
     filter: blur(80px);
+    animation: flowAnimation 15s infinite alternate ease-in-out;
 }
 
-/* --- 導航列與按鈕 --- */
+@keyframes flowAnimation {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+/* --- 3. 頂部導航 --- */
 .glass-nav {
+    position: fixed;
+    top: 0;
     width: 100%;
     padding: 20px;
     display: flex;
     justify-content: flex-end;
+    z-index: 100;
 }
 
-.glass-btn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    color: var(--text-color);
-    cursor: pointer;
-    font-weight: 500;
-    box-shadow: 0 4px 6px var(--shadow);
-    transition: transform 0.2s ease, background 0.3s ease;
+.nav-controls {
+    display: flex;
+    gap: 12px;
 }
 
-.glass-btn:active {
-    transform: scale(0.95);
-}
-
-/* --- 首頁佈局 (Grid) --- */
+/* --- 4. 容器與網格佈局 --- */
 .container {
     width: 100%;
-    max-width: 600px;
-    padding: 20px;
+    max-width: 440px; /* 優化手機端觀感 */
+    padding: 24px;
+    text-align: center;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.home-header {
+    margin-bottom: 40px;
+}
+
+.home-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.home-header p {
+    color: var(--text-sub);
+    font-size: 16px;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2x3 網格 */
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
+/* --- 5. 玻璃卡片 (核心視覺) --- */
 .glass-card {
+    position: relative;
     aspect-ratio: 1 / 1;
-    border-radius: 24px;
-    border: 1px solid var(--glass-border);
     background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 10px 30px var(--shadow);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 8px 32px var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    padding: 20px;
-    text-align: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.glass-card:hover {
-    transform: translateY(-5px);
+.glass-card:active {
+    transform: scale(0.92);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .glass-card img {
-    width: 70%;
-    height: 70%;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
-    margin-bottom: 10px;
-    filter: var(--svg-filter); /* 套用深淺模式濾鏡 */
+    filter: var(--svg-filter);
+    transition: transform 0.3s ease;
 }
 
-.glass-card span {
-    font-size: 0.9rem;
+.glass-card:hover img {
+    transform: scale(1.1);
+}
+
+/* 卡片文字樣式 */
+.card-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-text small {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+.card-text span {
+    font-size: 16px;
     font-weight: 600;
+    color: var(--text-main);
 }
 
-/* --- 抽籤畫面與動畫 --- */
-.hidden {
-    display: none !important;
+/* --- 6. 抽籤介面與拉霸動畫 --- */
+.draw-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 }
 
 .slot-machine {
-    width: 250px;
-    height: 250px;
-    margin: 50px auto;
+    width: 240px;
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
 
 .slot-machine img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    filter: var(--svg-filter);
 }
 
-/* 拉霸過程中的模糊動畫 */
+/* 旋轉動畫 */
 .spinning {
-    filter: blur(4px) brightness(1.2) var(--svg-filter) !important;
+    animation: spin 0.15s infinite linear;
+}
+
+@keyframes spin {
+    0% { opacity: 0.8; transform: translateY(-5px); }
+    50% { opacity: 1; transform: translateY(5px); }
+    100% { opacity: 0.8; transform: translateY(-5px); }
 }
 
 .result-label {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    min-height: 1.5em;
+    font-size: 20px;
+    font-weight: 600;
+    height: 30px;
+    color: var(--accent);
+}
+
+/* --- 7. 通用按鈕樣式 --- */
+.glass-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+    background: var(--card-hover);
 }
 
 .home-btn {
-    display: block;
-    margin: 30px auto;
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* --- 8. 工具類 --- */
+.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 針對 iOS 下載按鈕的特殊間距 */
+#install-app {
+    background: var(--accent);
+    color: white;
+    border: none;
 }
