@@ -158,3 +158,63 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('Service Worker 註冊失敗', err));
     });
 }
+/**
+ * 飲料店資料設定 (共 20 個選項)
+ * 包含 18 家品牌店與 2 個特殊狀態
+ */
+const drinkOptions = [
+    { id: 'starbucks',  name: '星巴克',        img: 'Tea-Shop/starbucks.svg' },
+    { id: 'yimuji',     name: '一沐日',        img: 'Tea-Shop/yimuji.svg' },
+    { id: 'dayungs',    name: '大苑子',        img: 'Tea-Shop/dayungs.svg' },
+    { id: 'wutong',     name: '五桐號',        img: 'Tea-Shop/wutong.svg' },
+    { id: 'kebuke',     name: '可不可',        img: 'Tea-Shop/kebuke.svg' },
+    { id: 'sfc',        name: '鮮茶道',        img: 'Tea-Shop/sfc.svg' },
+    { id: '50lan',      name: '50嵐',          img: 'Tea-Shop/50lan.svg' },
+    { id: 'coco',       name: 'CoCo都可',      img: 'Tea-Shop/coco.svg' },
+    { id: 'louisa',     name: '路易莎',        img: 'Tea-Shop/louisa.svg' },
+    { id: 'tea-magic',  name: '茶の魔手',      img: 'Tea-Shop/tea-magic.svg' },
+    { id: 'tea-water',  name: '茶湯會',        img: 'Tea-Shop/tea-water.svg' },
+    { id: 'milksha',    name: '迷客夏',        img: 'Tea-Shop/milksha.svg' },
+    { id: 'ching-shin', name: '清心福全',      img: 'Tea-Shop/ching-shin.svg' },
+    { id: 'macu',       name: '麻古茶坊',      img: 'Tea-Shop/macu.svg' },
+    { id: 'guiji',      name: '龜記茗品',      img: 'Tea-Shop/guiji.svg' },
+    { id: 'tao-tao',    name: '先喝道',        img: 'Tea-Shop/tao-tao.svg' },
+    { id: 'nap-tea',    name: '再睡5分鐘',     img: 'Tea-Shop/nap-tea.svg' },
+    { id: 'truedan',    name: '珍煮丹',        img: 'Tea-Shop/truedan.svg' },
+    { id: 'dont-eat',   name: '今天不要吃',    img: 'Tea-Shop/dont-eat.svg' },
+    { id: 'try-again',  name: '再抽一次',      img: 'Tea-Shop/try-again.svg' }
+];
+
+/**
+ * 隨機抽取 function
+ */
+function pickRandomDrink() {
+    const randomIndex = Math.floor(Math.random() * drinkOptions.length);
+    const selected = drinkOptions[randomIndex];
+    
+    // 輸出結果到控制台 (除錯用)
+    console.log(`抽中 ID: ${selected.id} | 店名: ${selected.name}`);
+    
+    return selected;
+}
+
+/**
+ * 渲染結果到畫面 (範例邏輯)
+ * 假設你有一個 id="result-container" 的 div
+ */
+function displayResult() {
+    const result = pickRandomDrink();
+    const container = document.getElementById('result-container');
+    
+    if (container) {
+        container.innerHTML = `
+            <div class="result-card">
+                <img src="${result.img}" alt="${result.name}" class="drink-logo">
+                <h3>${result.name}</h3>
+            </div>
+        `;
+    }
+}
+
+// 導出模組 (如果你有使用 ES6 模組化)
+// export { drinkOptions, pickRandomDrink };
