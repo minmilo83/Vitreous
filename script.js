@@ -1,10 +1,10 @@
 /**
- * Vitreous - 瑩透抽籤決定器 核心邏輯
- * 採用 Vibe Coding 模式開發，支援 PWA 與 Liquid Glass UI
+ * Vitreous - 瑩透抽籤決定器
+ * 功能：PWA 安裝控制、黑白模式切換、變速拉霸邏輯、THINK 儀式感
  */
 
-// --- 1. 資料配置 (與 GitHub 上的 assets 目錄對應) ---
-// 當你在 GitHub 資料夾新增圖片後，只需回來這裡把檔名加進去即可。
+// --- 1. 資料配置 ---
+// 當你在 GitHub 儲存庫新增圖片後，請在此處更新檔名
 const DRAW_DATA = {
     menu: ['pasta.svg', 'ramen.svg', 'rice.svg', 'hotpot.svg'], 
     restaurant: ['store_a.svg', 'store_b.svg', 'store_c.svg'],
@@ -17,38 +17,67 @@ const DRAW_DATA = {
     }
 };
 
-// --- 2. 深淺模式切換邏輯 ---
+// --- 2. PWA 手動安裝邏輯 ---
+let deferredPrompt;
+const installBtn = document.getElementById('install-app');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // 阻止瀏覽器自動彈出安裝提示
+    e.preventDefault();
+    // 暫存事件以供點擊按鈕時觸發
+    deferredPrompt = e;
+    // 顯示「下載 APP」按鈕
+    installBtn.classList.remove('hidden');
+});
+
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to install: ${outcome}`);
+        deferredPrompt = null;
+        installBtn.classList.add('hidden');
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('Vitreous 已成功安裝');
+    installBtn.classList.add('hidden');
+});
+
+// --- 3. 深淺模式切換 ---
 const themeToggle = document.getElementById('theme-toggle');
 
-const initTheme = () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
+const applyTheme = (theme) => {
+    if (theme === 'dark') {
         document.body.classList.add('dark-mode');
         document.body.classList.remove('light-mode');
+    } else {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
     }
 };
 
 themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode');
-    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
+    const isDark = document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode', !isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 });
 
-initTheme();
+// 初始化主題
+applyTheme(localStorage.getItem('theme') || 'light');
 
-// --- 3. 頁面導覽邏輯 ---
+// --- 4. 導航邏輯 ---
 function startDraw(type) {
     const homeScreen = document.getElementById('home-screen');
     const drawScreen = document.getElementById('draw-screen');
     const resultText = document.getElementById('result-text');
     const slotImg = document.getElementById('slot-img');
 
-    // 切換介面
     homeScreen.classList.add('hidden');
     drawScreen.classList.remove('hidden');
-    resultText.innerText = ""; // 重置文字
-    slotImg.style.transform = "scale(1)"; // 重置縮放
+    resultText.innerText = ""; 
+    slotImg.style.transform = "scale(1)";
 
     if (type === 'decision') {
         runDecisionLogic();
@@ -62,79 +91,70 @@ function goHome() {
     document.getElementById('draw-screen').classList.add('hidden');
 }
 
-// --- 4. 核心拉霸演算法 (由慢到快再到慢) ---
+// --- 5. 拉霸演算法 (由慢到快再到慢) ---
 async function runSlotLogic(type) {
     const slotImg = document.getElementById('slot-img');
     const resultText = document.getElementById('result-text');
     const items = DRAW_DATA[type];
     
-    // 隨機決定總轉動時間 (2.0s - 3.0s 之間)
+    // 隨機轉動總時間 2.0s - 3.0s
     const totalDuration = Math.floor(Math.random() * 1000) + 2000; 
     let elapsed = 0;
-    let delay = 120; // 初始切換延遲 (ms)
+    let delay = 120; // 初始延遲 (ms)
     
     slotImg.classList.add('spinning');
 
-    // 高頻率圖片切換迴圈
     while (elapsed < totalDuration) {
-        // 隨機選取該分類下的一張圖片
         const randomIndex = Math.floor(Math.random() * items.length);
         slotImg.src = `assets/${type}/${items[randomIndex]}`;
         
-        // 變速曲線控制 (由慢到快，再到極慢)
         const progress = elapsed / totalDuration;
-        if (progress < 0.25) {
-            delay -= 8; // 加速階段
-        } else if (progress > 0.7) {
-            delay += 25; // 減速階段
-        } else {
-            delay = 40; // 穩定高速階段
-        }
+        // 變速曲線
+        if (progress < 0.25) delay -= 8;      // 加速
+        else if (progress > 0.7) delay += 25; // 減速
+        else delay = 40;                     // 高速穩定
 
-        // 安全界限，防止 delay 過小或過大
-        delay = Math.max(30, Math.min(delay, 500));
+        delay = Math.max(30, Math.min(delay, 500)); // 限制範圍
 
         await new Promise(resolve => setTimeout(resolve, delay));
         elapsed += delay;
     }
 
-    // 結束動畫
     slotImg.classList.remove('spinning');
     resultText.innerText = "這是您的結果";
     
-    // 手機端輕微震動回饋 (如果裝置支援)
-    if (navigator.vibrate) navigator.vibrate(50);
+    if (navigator.vibrate) navigator.vibrate(50); // 結束震動回饋
 }
 
-// --- 5. 「要/不要」特殊 THINK 邏輯 ---
+// --- 6. 要/不要 THINK 邏輯 ---
 async function runDecisionLogic() {
     const slotImg = document.getElementById('slot-img');
     const resultText = document.getElementById('result-text');
     const { think, options } = DRAW_DATA.decision;
 
-    // 1. 顯示 THINK 圖片 (思考階段)
+    // 階段一：思考中 (THINK)
     slotImg.src = `assets/decision/${think}`;
     slotImg.style.transition = "transform 2s ease-in-out";
-    slotImg.style.transform = "scale(1.15)"; // 慢速放大營造緊張感
+    slotImg.style.transform = "scale(1.15)"; 
     
-    await new Promise(resolve => setTimeout(resolve, 2000)); // 固定思考 2 秒
+    await new Promise(resolve => setTimeout(resolve, 2000)); 
 
-    // 2. 顯示隨機結果 (YES 或 NO)
+    // 階段二：結果 (YES / NO)
     const finalResult = options[Math.floor(Math.random() * options.length)];
     slotImg.src = `assets/decision/${finalResult}`;
     slotImg.style.transition = "transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-    slotImg.style.transform = "scale(1)"; // 彈回原大小
+    slotImg.style.transform = "scale(1)"; 
     
     resultText.innerText = "這是您的結果";
     
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 }
 
-// --- 6. PWA Service Worker 註冊 ---
+// --- 7. Service Worker 註冊 ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Vitreous PWA 就緒:', reg.scope))
-            .catch(err => console.log('PWA 註冊失敗:', err));
+            .then(reg => console.log('Service Worker 已註冊'))
+            .catch(err => console.log('Service Worker 註冊失敗', err));
     });
 }
