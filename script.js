@@ -17,26 +17,26 @@ const DRAW_DATA = {
 
 // --- 2. 新增：飲料店專屬資料設定 (共 20 個選項) ---
 const drinkOptions = [
-    { id: 'starbucks',  name: '星巴克',        img: 'Tea-Shop/starbucks.svg' },
-    { id: 'yimuji',     name: '一沐日',        img: 'Tea-Shop/yimuji.svg' },
-    { id: 'dayungs',    name: '大苑子',        img: 'Tea-Shop/dayungs.svg' },
-    { id: 'wutong',     name: '五桐號',        img: 'Tea-Shop/wutong.svg' },
-    { id: 'kebuke',     name: '可不可',        img: 'Tea-Shop/kebuke.svg' },
-    { id: 'sfc',        name: '鮮茶道',        img: 'Tea-Shop/sfc.svg' },
-    { id: '50lan',      name: '50嵐',          img: 'Tea-Shop/50lan.svg' },
-    { id: 'coco',       name: 'CoCo都可',      img: 'Tea-Shop/coco.svg' },
-    { id: 'louisa',     name: '路易莎',        img: 'Tea-Shop/louisa.svg' },
-    { id: 'tea-magic',  name: '茶の魔手',      img: 'Tea-Shop/tea-magic.svg' },
-    { id: 'tea-water',  name: '茶湯會',        img: 'Tea-Shop/tea-water.svg' },
-    { id: 'milksha',    name: '迷客夏',        img: 'Tea-Shop/milksha.svg' },
-    { id: 'ching-shin', name: '清心福全',      img: 'Tea-Shop/ching-shin.svg' },
-    { id: 'macu',       name: '麻古茶坊',      img: 'Tea-Shop/macu.svg' },
-    { id: 'guiji',      name: '龜記茗品',      img: 'Tea-Shop/guiji.svg' },
-    { id: 'tao-tao',    name: '先喝道',        img: 'Tea-Shop/tao-tao.svg' },
-    { id: 'nap-tea',    name: '再睡5分鐘',     img: 'Tea-Shop/nap-tea.svg' },
-    { id: 'truedan',    name: '珍煮丹',        img: 'Tea-Shop/truedan.svg' },
-    { id: 'dont-eat',   name: '今天不要吃',    img: 'Tea-Shop/dont-eat.svg' },
-    { id: 'try-again',  name: '再抽一次',      img: 'Tea-Shop/try-again.svg' }
+    { id: 'starbucks',  name: '星巴克',        img: 'assets/Tea-Shop/starbucks.svg' },
+    { id: 'yimuji',     name: '一沐日',        img: 'assets/Tea-Shop/yimuji.svg' },
+    { id: 'dayungs',    name: '大苑子',        img: 'assets/Tea-Shop/dayungs.svg' },
+    { id: 'wutong',     name: '五桐號',        img: 'assets/Tea-Shop/wutong.svg' },
+    { id: 'kebuke',     name: '可不可',        img: 'assets/Tea-Shop/kebuke.svg' },
+    { id: 'sfc',        name: '鮮茶道',        img: 'assets/Tea-Shop/sfc.svg' },
+    { id: '50lan',      name: '50嵐',          img: 'assets/Tea-Shop/50lan.svg' },
+    { id: 'coco',       name: 'CoCo都可',      img: 'assets/Tea-Shop/coco.svg' },
+    { id: 'louisa',     name: '路易莎',        img: 'assets/Tea-Shop/louisa.svg' },
+    { id: 'tea-magic',  name: '茶の魔手',      img: 'assets/Tea-Shop/tea-magic.svg' },
+    { id: 'tea-water',  name: '茶湯會',        img: 'assets/Tea-Shop/tea-water.svg' },
+    { id: 'milksha',    name: '迷客夏',        img: 'assets/Tea-Shop/milksha.svg' },
+    { id: 'ching-shin', name: '清心福全',      img: 'assets/Tea-Shop/ching-shin.svg' },
+    { id: 'macu',       name: '麻古茶坊',      img: 'assets/Tea-Shop/macu.svg' },
+    { id: 'guiji',      name: '龜記茗品',      img: 'assets/Tea-Shop/guiji.svg' },
+    { id: 'tao-tao',    name: '先喝道',        img: 'assets/Tea-Shop/tao-tao.svg' },
+    { id: 'nap-tea',    name: '再睡5分鐘',     img: 'assets/Tea-Shop/nap-tea.svg' },
+    { id: 'truedan',    name: '珍煮丹',        img: 'assets/Tea-Shop/truedan.svg' },
+    { id: 'dont-eat',   name: '今天不要吃',    img: 'assets/Tea-Shop/dont-eat.svg' },
+    { id: 'try-again',  name: '再抽一次',      img: 'assets/Tea-Shop/try-again.svg' }
 ];
 
 // --- 3. PWA 手動安裝邏輯 ---
