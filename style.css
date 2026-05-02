@@ -1,0 +1,163 @@
+/* --- 基礎變數設定 --- */
+:root {
+    /* 預設淺色模式 (Light Mode) */
+    --bg-color: #f0f2f5;
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --text-color: #222;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --accent-color: #ffffff;
+    --svg-filter: none; /* 淺色模式不反轉 SVG */
+}
+
+body.dark-mode {
+    /* 深色模式 (Dark Mode) */
+    --bg-color: #0a0a0a;
+    --glass-bg: rgba(0, 0, 0, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-color: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --accent-color: #1a1a1a;
+    --svg-filter: invert(1); /* 深色模式將黑色 SVG 反轉成白色 */
+}
+
+/* --- 全域樣式 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- 流光背景效果 --- */
+.vibe-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle at 50% 50%, var(--accent-color), var(--bg-color));
+    opacity: 0.6;
+    filter: blur(80px);
+}
+
+/* --- 導航列與按鈕 --- */
+.glass-nav {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.glass-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 4px 6px var(--shadow);
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.glass-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- 首頁佈局 (Grid) --- */
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2x3 網格 */
+    gap: 20px;
+}
+
+.glass-card {
+    aspect-ratio: 1 / 1;
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 20px;
+    text-align: center;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+}
+
+.glass-card img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    margin-bottom: 10px;
+    filter: var(--svg-filter); /* 套用深淺模式濾鏡 */
+}
+
+.glass-card span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* --- 抽籤畫面與動畫 --- */
+.hidden {
+    display: none !important;
+}
+
+.slot-machine {
+    width: 250px;
+    height: 250px;
+    margin: 50px auto;
+}
+
+.slot-machine img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 拉霸過程中的模糊動畫 */
+.spinning {
+    filter: blur(4px) brightness(1.2) var(--svg-filter) !important;
+}
+
+.result-label {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-height: 1.5em;
+}
+
+.home-btn {
+    display: block;
+    margin: 30px auto;
+}
