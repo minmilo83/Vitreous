@@ -2,109 +2,124 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vitreous | 瑩透抽籤決定器</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA 與 行動端設定 -->
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="assets/home/decision.svg">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- 樣式表 -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="light-mode">
-
+<body>
+    <!-- 動態流體背景 -->
     <div class="vibe-background"></div>
 
+    <!-- 頂部功能列 -->
     <nav class="glass-nav">
         <div class="nav-controls">
-            <button id="install-app" class="glass-btn hidden">下載 APP</button>
-            <button id="theme-toggle" class="glass-btn">
-                <span class="mode-icon">🌓</span>
-            </button>
+            <button id="install-app" class="glass-btn hidden">下載 App</button>
+            <button id="theme-toggle" class="glass-btn" aria-label="切換模式">🌓</button>
         </div>
     </nav>
 
+    <!-- 主頁面：模組選擇 -->
     <main id="home-screen" class="container">
         <header class="home-header">
             <h1>Vitreous</h1>
-            <p>讓選擇變得優雅</p>
+            <p>讓直覺決定你的下一場冒險</p>
         </header>
-        
+
         <div class="grid">
+            <!-- 1. 隨機菜單 -->
             <div class="glass-card" onclick="startDraw('menu')">
                 <div class="card-content">
-                    <img src="assets/home/menu.svg" alt="選擇菜單">
+                    <img src="assets/home/menu.svg" alt="菜單">
                     <div class="card-text">
-                        <small>選擇</small>
-                        <span>菜單</span>
+                        <small>吃什麼</small>
+                        <span>隨機菜單</span>
                     </div>
                 </div>
             </div>
 
+            <!-- 2. 地點決定 -->
             <div class="glass-card" onclick="startDraw('restaurant')">
                 <div class="card-content">
-                    <img src="assets/home/restaurant.svg" alt="選擇餐廳">
+                    <img src="assets/home/restaurant.svg" alt="餐廳">
                     <div class="card-text">
-                        <small>選擇</small>
-                        <span>餐廳</span>
+                        <small>去哪裡</small>
+                        <span>探索餐廳</span>
                     </div>
                 </div>
             </div>
 
+            <!-- 3. 預算範圍 -->
             <div class="glass-card" onclick="startDraw('price')">
                 <div class="card-content">
-                    <img src="assets/home/price.svg" alt="選擇金額">
+                    <img src="assets/home/price.svg" alt="價格">
                     <div class="card-text">
-                        <small>選擇</small>
-                        <span>金額</span>
+                        <small>預算多少</small>
+                        <span>價格範圍</span>
                     </div>
                 </div>
             </div>
 
+            <!-- 4. 份量人數 -->
             <div class="glass-card" onclick="startDraw('count')">
                 <div class="card-content">
-                    <img src="assets/home/count.svg" alt="選擇數目">
+                    <img src="assets/home/count.svg" alt="人數">
                     <div class="card-text">
-                        <small>選擇</small>
-                        <span>數目</span>
+                        <small>幾份好</small>
+                        <span>份量統計</span>
                     </div>
                 </div>
             </div>
 
+            <!-- 5. 飲料拉霸 (你最期待的功能) -->
             <div class="glass-card" onclick="startDraw('tea-shop')">
                 <div class="card-content">
-                    <img src="assets/home/drink.svg" alt="選擇飲料店">
+                    <img src="assets/home/drink.svg" alt="飲料">
                     <div class="card-text">
-                        <small>選擇</small>
-                        <span>飲料店</span>
+                        <small>手搖飲</small>
+                        <span>飲料決定</span>
                     </div>
                 </div>
             </div>
 
+            <!-- 6. 要/不要 終極決策 -->
             <div class="glass-card" onclick="startDraw('decision')">
                 <div class="card-content">
-                    <img src="assets/home/decision.svg" alt="要/不要">
+                    <img src="assets/home/decision.svg" alt="決定">
                     <div class="card-text">
-                        <small>要 /</small>
-                        <span>不要</span>
+                        <small>猶豫不決</small>
+                        <span>要還是不要</span>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- 抽籤介面 -->
     <section id="draw-screen" class="container hidden">
         <div class="draw-container">
-            <div class="slot-machine glass-card">
-                <img id="slot-img" src="" alt="抽籤中">
+            <!-- 琉璃質感的拉霸卡片 -->
+            <div class="glass-card slot-machine">
+                <img id="slot-img" src="assets/home/decision.svg" alt="抽籤中">
             </div>
-            <div id="result-text" class="result-label"></div>
             
-            <footer class="draw-footer">
-                <button onclick="goHome()" class="glass-btn home-btn">回首頁</button>
-            </footer>
+            <div class="result-area">
+                <p id="result-text" class="result-label">準備中...</p>
+            </div>
+
+            <button class="glass-btn home-btn" onclick="goHome()">返回首頁</button>
         </div>
     </section>
 
+    <!-- 腳本 -->
     <script src="script.js"></script>
 </body>
 </html>
